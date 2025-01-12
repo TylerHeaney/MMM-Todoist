@@ -153,7 +153,7 @@ Module.register("MMM-Todoist", {
 	},
 
 	notificationReceived: function (notification, payload) {
-		if (notification === "USER_PRESENCE") { // notification sended by module MMM-PIR-Sensor. See its doc
+		if (notification === "USER_PRESENCE") { // notification sent by module MMM-PIR-Sensor. See its doc
 			//Log.log("Fct notificationReceived USER_PRESENCE - payload = " + payload);
 			UserPresence = payload;
 			this.GestionUpdateIntervalToDoIst();
@@ -310,6 +310,8 @@ Module.register("MMM-Todoist", {
 			// Ignore sub-tasks
 			if (item.parent_id!=null && !self.config.displaySubtasks) { return; }
 
+			// Removed filters to test date filter
+			/*
 			// Filter using label if a label is configured
 			if (self.config.labels.length > 0 && item.labels.length > 0) {
         			// Check all the labels assigned to the task. Add to items if match with configured label
@@ -331,6 +333,13 @@ Module.register("MMM-Todoist", {
 						return;
 					}
 			  });
+			}
+			*/
+			
+			if (self.config.upcoming === true) {
+				if(item.due!=null) {
+					items.push(item);
+				}
 			}
 		});
 
@@ -412,6 +421,7 @@ Module.register("MMM-Todoist", {
 
 		return new Date(year, month - 1, day, hour, minute, second);
 	},
+
 	sortByTodoist: function (itemstoSort) {
 		itemstoSort.sort(function (a, b) {
 			if (!a.parent_id && !b.parent_id) {
